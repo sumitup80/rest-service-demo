@@ -1,0 +1,43 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'org.springframework.experimental.aot' version '0.11.5'
+	id 'org.graalvm.buildtools.native' version '0.9.11'
+}
+
+repositories {
+	mavenLocal()
+	maven { url 'https://repo.spring.io/release' }
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+	mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.experimental:spring-native:0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'rest-service-demo'
+sourceCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder:tiny'
+	environment = ['BP_NATIVE_IMAGE': 'true']
+}
